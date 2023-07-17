@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from tasks.models import Task, History
 from rest_framework import viewsets, permissions,  mixins,  status
-from tasks.serializers import UserSerializer, GroupSerializer, TaskSerializer, HistorySerializer
+from tasks.serializers import UserSerializer, GroupSerializer, TaskSerializer, HistorySerializer, HistoryPointSerializer
 from rest_framework.response import Response
 from django.http import Http404
 from datetime import datetime
@@ -85,7 +85,13 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
             if when!=None: queryset = [queryset.filter(date__lte=datetime.fromtimestamp(int(when))).latest('date')]
         except:
             raise Http404
-        serializer = HistorySerializer(queryset, many=True,context={'request': request})
+        if when==None:
+            serializer = HistorySerializer(queryset.order_by('date'), many=True,context={'request': request})
+        else: 
+            serializer = HistoryPointSerializer(queryset, many=True,context={'request': request})
+            print(queryset[0].action)
+            if queryset[0].action=='2':
+                raise Http404                      
         return Response(serializer.data)
     
 class UserViewSet(viewsets.ModelViewSet):

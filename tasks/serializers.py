@@ -12,6 +12,11 @@ class HistorySerializer(serializers.HyperlinkedModelSerializer):
         model = History
         fields = ['task_id', 'date', 'action', 'title', 'description', 'status', 'users']
 
+class HistoryPointSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = History
+        fields = ['task_id', 'title', 'description', 'status', 'users']
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
