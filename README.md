@@ -1,10 +1,10 @@
-# Installation
+## Installation
 Install docker-compose and run app with
 ```bash
 sudo docker-compose up -d --build
 ```
-# Models
-## Task
+## Models
+### Task
 | Field | Type | Description|
 |--|--|--|
 | `title` | text | Title of task, can't be empty |
@@ -12,7 +12,7 @@ sudo docker-compose up -d --build
 | `status` | int | Status of task <br>`0 New`<br>`1 in progress`<br>`2 Completed` |
 | `users` | [User] | Array of Users to add to task |
 
-## History
+### History
 | Field | Type | Description|
 |--|--|--|
 | `date` | data | Time of action |
@@ -22,21 +22,21 @@ sudo docker-compose up -d --build
 | `description` | text | Description of task, can be empty |
 | `status` | int | Status of task <br>`0 New`<br>`1 in progress`<br>`2 Completed` |
 | `users` | [User] | Array of Users to add to task |
-# Usage
-## Create superuser
+## Usage
+### Create superuser
 Run in bash
 ```bash
 sudo docker-compose exec web python3 manage.py createsuperuser
 ```
 
-# Task api
+## Task api
 
-## Get all tasks
-**GET /tasks**
+### Get all tasks
+**GET /tasks**<br>
 Returns json with all task models
 
-## Filter tasks
-**GET /tasks?key=value**
+### Filter tasks
+**GET /tasks?key=value**<br>
 Returns json with filtered values.
 Possible keys:
 | Field | Type | Description|
@@ -46,8 +46,8 @@ Possible keys:
 | status | int | `0 New`<br>`1 in progress`<br>`2 Completed`  |
 | users | User | Array of User objects |
 
-## Add task
-**POST /tasks**
+### Add task
+**POST /tasks**<br>
 Returns json with object on succes
 Takes data in json
 Example data:
@@ -60,28 +60,28 @@ Example data:
 }
 ```
 
-## Modify task
-**PUT /tasks/<id>**
+### Modify task
+**PUT /tasks/<id>**<br>
 Returns json with object on succes
 Takes the same data as Post method
 
-## Remove task
-**DELETE /task/<id>**
+### Remove task
+**DELETE /task/<id>**<br>
 Returns 204 response on success
 
 
-# History api
+## History api
 
-## Get all history entry
-**GET /history**
+### Get all history entry
+**GET /history**<br>
 Returns json with all task models
 
-## Filter history entry
-**GET /tasks?key=value**
+### Filter history entry
+**GET /tasks?key=value**<br>
 Returns json with filtered values.
 Possible keys:
 | Field | Type | Description|
 |--|--|--|
 | id | int | Id of Task object |
-| action | int | Action taken upon <br>`0 Created`<br>`1 Modify`<br>`2 Removal` |
+| action | int | Action taken upon Task object<br>`0 Created`<br>`1 Modify`<br>`2 Removal` |
 | when | UNIX timestamp | Used with id key, Show state of Task at given time  |
