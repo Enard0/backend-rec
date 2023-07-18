@@ -23,7 +23,7 @@ sudo docker-compose up -d --build
 | `status` | int | Status of task <br>`0 New`<br>`1 in progress`<br>`2 Completed` |
 | `users` | [User] | Array of Users to add to task |
 ## Usage
-### Create superuser
+### Create admin account
 Run in bash
 ```bash
 sudo docker-compose exec web python3 manage.py createsuperuser
@@ -48,8 +48,8 @@ Possible keys:
 
 ### Add task
 **POST /tasks**<br>
-Returns json with object on succes
-Takes data in json
+Returns json with object on succes.
+Takes data in json.
 Example data:
 ```json
 {
@@ -62,19 +62,19 @@ Example data:
 
 ### Modify task
 **PUT /tasks/<id>**<br>
-Returns json with object on succes
-Takes the same data as Post method
+Returns json with object on succes.
+Takes the same data as Post method.
 
 ### Remove task
 **DELETE /task/<id>**<br>
-Returns 204 response on success
+Returns 204 response on success.
 
 
 ## History api
 
 ### Get all history entry
 **GET /history**<br>
-Returns json with all task models
+Returns json with all task models.
 
 ### Filter history entry
 **GET /tasks?key=value**<br>

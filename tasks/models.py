@@ -29,7 +29,7 @@ class Task(models.Model):
 
 
 class History(models.Model):
-    task_id = models.IntegerField()
+    task_id = models.IntegerField(default=0)
     title = models.CharField(max_length=100)
     description = models.TextField(default="",blank=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)
@@ -43,4 +43,4 @@ class History(models.Model):
         related_query_name="history",
     )
     date = models.DateTimeField(auto_now_add=True)
-    action = models.IntegerField(choices=ACTION_CHOICES)
+    action = models.IntegerField(choices=ACTION_CHOICES, default=0)

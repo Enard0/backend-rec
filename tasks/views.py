@@ -33,16 +33,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        if request.content_type == "application/json":
-            request.data.update({'task_id':serializer.instance.id,'action':0})
-        else:    
-            _mutable = request.data._mutable
-            request.data._mutable = True
-            request.data.update({'task_id':serializer.instance.id,'action':0})
-            request.data._mutable = _mutable
-        hserializer = HistorySerializer(data=request.data,context={'request': request})
-        hserializer.is_valid(raise_exception=True)
-        self.perform_create(hserializer)
         return Response({'status': 'success', 'pk': serializer.instance.pk})
     
     def update(self, request, pk=None, project_pk=None):
