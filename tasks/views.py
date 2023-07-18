@@ -15,19 +15,18 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
     def list(self, request):
-        queryset = Task.objects.all()
         try:
             title = request.query_params.get('title')
-            if title!=None: queryset =  queryset.filter(title__iexact=title)
+            if title is not None: self.queryset =  self.queryset.filter(title__iexact=title)
             description = request.query_params.get('description')
-            if description!=None: queryset = queryset.filter(description__icontains=description)
+            if description is not None: self.queryset = self.queryset.filter(description__icontains=description)
             status = request.query_params.get('status')
-            if status!=None: queryset = queryset.filter(status__iexact=status)
+            if status is not None: self.queryset = self.queryset.filter(status__iexact=status)
             users = request.query_params.get('users')
-            if users!=None: queryset = queryset.filter(users__id__icontains=users)
+            if users is not None: self.queryset = self.queryset.filter(users__id__icontains=users)
         except:
             raise Http404
-        serializer = TaskSerializer(queryset, many=True,context={'request': request})
+        serializer = TaskSerializer(self.queryset, many=True,context={'request': request})
         return Response(serializer.data)
     
     def create(self, request):
@@ -75,22 +74,21 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
     serializer_class = HistorySerializer
     permission_classes = [permissions.IsAuthenticated]
     def list(self, request):
-        queryset = History.objects.all()
         try:
             id = request.query_params.get('id')
-            if id!=None: queryset = queryset.filter(task_id__iexact=id)
+            if id is not None: self.queryset = self.queryset.filter(task_id__iexact=id)
             action = request.query_params.get('action')
-            if action!=None: queryset = queryset.filter(action__iexact=status)
+            if action is not None: self.queryset = self.queryset.filter(action__iexact=status)
             when = request.query_params.get('when')
-            if when!=None: queryset = [queryset.filter(date__lte=datetime.fromtimestamp(int(when))).latest('date')]
+            if when is not None: self.queryset = [self.queryset.filter(date__lte=datetime.fromtimestamp(int(when))).latest('date')]
         except:
             raise Http404
-        if when==None:
-            serializer = HistorySerializer(queryset.order_by('date'), many=True,context={'request': request})
+        if when is None:
+            serializer = HistorySerializer(self.queryset.order_by('date'), many=True,context={'request': request})
         else: 
-            serializer = HistoryPointSerializer(queryset, many=True,context={'request': request})
-            print(queryset[0].action)
-            if queryset[0].action=='2':
+            serializer = HistoryPointSerializer(self.queryset, many=True,context={'request': request})
+            print(self.queryset[0].action)
+            if self.queryset[0].action=='2':
                 raise Http404                      
         return Response(serializer.data)
     

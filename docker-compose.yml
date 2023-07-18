@@ -1,0 +1,23 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: cdoTfMPvBnb7WtN7qcyT
+      POSTGRES_USER: task-db
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000

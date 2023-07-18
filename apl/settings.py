@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-o=e%d&rb!d4u490g8erzo!$d(iesul7vl0701a05bzskri4gwm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
@@ -72,17 +72,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apl.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tasks',
-        'USER': 'taskmen',
+        'NAME': 'task-db',
+        'USER': 'task-db',
         'PASSWORD': 'cdoTfMPvBnb7WtN7qcyT',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '',
     }
 }
