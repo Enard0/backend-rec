@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from tasks.models import Task, History
 from rest_framework import viewsets, permissions,  mixins,  status
-from tasks.serializers import UserSerializer, GroupSerializer, TaskSerializer, HistorySerializer, HistoryPointSerializer
+from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer, HistoryPointSerializer
 from rest_framework.response import Response
 from django.http import Http404
 from datetime import datetime
@@ -72,13 +72,3 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
