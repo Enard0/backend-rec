@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from tasks.models import Task, History
+from django.contrib.auth.hashers import make_password
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,7 +21,6 @@ class TaskSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
         instance.status = validated_data.get('status', instance.status)
-        print(validated_data.get('users'))
         instance.users.set(validated_data.get('users', instance.users))
         instance.save()
 
@@ -46,3 +46,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['url', 'username', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
+        
+    def create(self, validated_data):
+        passw = validated_data.pop('password')
+        validated_data['password']=make_password(passw)
+        user = User.objects.create(**validated_data)
+        return user

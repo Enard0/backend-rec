@@ -5,6 +5,7 @@ from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer,
 from rest_framework.response import Response
 from django.http import Http404
 from datetime import datetime
+from tasks.permissions import UserPermsDecorator
 
 class TaskViewSet(viewsets.ModelViewSet):
     """
@@ -13,7 +14,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     def list(self, request):
         try:
             self.queryset = self.queryset.all()
@@ -27,14 +28,14 @@ class TaskViewSet(viewsets.ModelViewSet):
             if users is not None: self.queryset = self.queryset.filter(users__id__icontains=users)
         except:
             raise Http404
-        serializer = TaskSerializer(self.queryset, many=True,context={'request': request})
+        serializer = self.serializer_class(self.queryset, many=True,context={'request': request})
         return Response(serializer.data)
     
     def destroy(self, request, pk=None):
         instance = self.queryset.get(pk=pk)       
         data= instance.__dict__
         data.update({'task_id':instance.id,'action':2})
-        hserializer = HistorySerializer(data=data,context={'request': request})
+        hserializer = self.serializer_class(data=data,context={'request': request})
         hserializer.is_valid(raise_exception=True)
         self.perform_create(hserializer)
         instance.delete()
@@ -58,7 +59,7 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
         except:
             raise Http404
         if when is None:
-            serializer = HistorySerializer(self.queryset.order_by('date'), many=True,context={'request': request})
+            serializer = self.serializer_class(self.queryset.order_by('date'), many=True,context={'request': request})
         else: 
             serializer = HistoryPointSerializer(self.queryset, many=True,context={'request': request})
             print(self.queryset[0].action)
@@ -72,3 +73,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    #permission_classes = [UserViewPermissions]
+    @UserPermsDecorator
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True,context={'request': request})
+        return Response(serializer.data)
