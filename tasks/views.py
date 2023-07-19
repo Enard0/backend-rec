@@ -16,6 +16,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     def list(self, request):
         try:
+            self.queryset = self.queryset.all()
             title = request.query_params.get('title')
             if title is not None: self.queryset =  self.queryset.filter(title__iexact=title)
             description = request.query_params.get('description')
@@ -27,39 +28,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         except:
             raise Http404
         serializer = TaskSerializer(self.queryset, many=True,context={'request': request})
-        return Response(serializer.data)
-    
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        if request.content_type == "application/json":
-            request.data.update({'task_id':serializer.instance.id,'action':0})
-        else:    
-            _mutable = request.data._mutable
-            request.data._mutable = True
-            request.data.update({'task_id':serializer.instance.id,'action':0})
-            request.data._mutable = _mutable
-        hserializer = HistorySerializer(data=request.data,context={'request': request})
-        hserializer.is_valid(raise_exception=True)
-        self.perform_create(hserializer)
-        return Response({'status': 'success', 'pk': serializer.instance.pk})
-    
-    def update(self, request, pk=None, project_pk=None):
-        instance = self.queryset.get(pk=pk)
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        if request.content_type == "application/json":
-            request.data.update({'task_id':serializer.instance.id,'action':1})
-        else:    
-            _mutable = request.data._mutable
-            request.data._mutable = True
-            request.data.update({'task_id':serializer.instance.id,'action':1})
-            request.data._mutable = _mutable
-        hserializer = HistorySerializer(data=request.data,context={'request': request})
-        hserializer.is_valid(raise_exception=True)
-        self.perform_create(hserializer)
         return Response(serializer.data)
     
     def destroy(self, request, pk=None):
