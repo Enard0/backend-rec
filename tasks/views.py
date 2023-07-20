@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from tasks.models import Task, History, REMOVED
 from rest_framework import viewsets, permissions,  mixins,  status
-from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer, HistoryPointSerializer
+from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer
 from rest_framework.response import Response
 from django.http import Http404
 from datetime import datetime

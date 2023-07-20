@@ -36,11 +36,6 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ['task_id', 'date', 'action', 'title', 'description', 'status', 'users']
 
-class HistoryPointSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = History
-        fields = ['task_id', 'title', 'description', 'status', 'users']
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
