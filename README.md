@@ -39,7 +39,7 @@ Returns json with all task models
 **GET /tasks?key=value**<br>
 Returns json with filtered values.
 Possible keys:
-| Field | Type | Description|
+| Key | Type | Description |
 |--|--|--|
 | title | text | Exact title of task |
 | description | text | Text that has to be in description |
@@ -80,8 +80,8 @@ Returns json with all task models
 **GET /tasks?key=value**<br>
 Returns json with filtered values.
 Possible keys:
-| Field | Type | Description|
+| Key | Type | Description|
 |--|--|--|
 | id | int | Id of Task object |
 | action | int | Action taken upon Task object<br>`0 Created`<br>`1 Modify`<br>`2 Removal` |
-| when | UNIX timestamp | Used with id key, Show state of Task at given time  |
+| when | UNIX timestamp | Show state of Task at given time  |
