@@ -62,7 +62,14 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
                 queryset = queryset.filter(action__iexact=action)
             when = self.request.query_params.get('when')
             if when is not None: 
-                queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+                if when.isnumeric():
+                    queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+                else:
+                    try:
+                        time=datetime.fromisoformat(when.replace('Z',''))
+                        queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+                    except:
+                        pass
         except:
             raise Http404
         return super().filter_queryset(queryset)

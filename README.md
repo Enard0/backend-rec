@@ -84,4 +84,4 @@ Possible keys:
 |--|--|--|
 | id | int | Id of Task object |
 | action | int | Action taken upon Task object<br>`0 Created`<br>`1 Modify`<br>`2 Removal` |
-| when | UNIX timestamp | Show state of Task at given time  |
+| when | UNIX timestamp or ISO format | Show state of Task at given time  |
