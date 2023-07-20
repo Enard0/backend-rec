@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from tasks.models import Task, History
+from tasks.models import Task, History, REMOVED
 from rest_framework import viewsets, permissions,  mixins,  status
 from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer, HistoryPointSerializer
 from rest_framework.response import Response
@@ -33,7 +33,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk=None):
         instance = self.queryset.get(pk=pk)       
         data= instance.__dict__
-        data.update({'task_id':instance.id,'action':2})
+        data.update({'task_id':instance.id,'action':REMOVED})
         hserializer = HistorySerializer(data=data,context={'request': request})
         hserializer.is_valid(raise_exception=True)
         self.perform_create(hserializer)
@@ -55,17 +55,10 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
             action = self.request.query_params.get('action')
             if action is not None: queryset = queryset.filter(action__iexact=action)
             when = self.request.query_params.get('when')
-            if when is not None: queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=2)
+            if when is not None: queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
         except:
             raise Http404
         return super().filter_queryset(queryset)
-    
-    #def list(self, request):
-    #    if self.request.query_params.get('when') is None:
-    #        serializer = self.serializer_class(self.queryset, many=True,context={'request': request})
-    #    else:
-    #        serializer = HistoryPointSerializer(self.queryset, many=True,context={'request': request})                    
-    #    return Response(serializer.data)
     
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -73,7 +66,6 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    #permission_classes = [UserViewPermissions]
     @UserPermsDecorator
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True,context={'request': request})

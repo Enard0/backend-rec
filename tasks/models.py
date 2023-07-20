@@ -2,8 +2,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 
+CREATED = 0
+EDITED = 1
+REMOVED = 2
+
 STATUS_CHOICES = ((0,'Nowy'),(1,'W toku'), (2,'Rozwiązany'))
-ACTION_CHOICES = ((0,'Creation'),(1,'Edit'), (2,'Removal'))
+ACTION_CHOICES = ((CREATED,'Creation'),(EDITED,'Edit'), (REMOVED,'Removal'))
 
 class Task(models.Model):
     title = models.CharField(max_length=100)

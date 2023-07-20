@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from rest_framework import serializers
-from tasks.models import Task, History
+from tasks.models import Task, History, EDITED, CREATED
 from django.contrib.auth.hashers import make_password
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
         usrs = validated_data.pop('users')
         obj = Task.objects.create(**validated_data)
         obj.users.set(usrs)
-        validated_data.update({'task_id':obj.id,'action':0})
+        validated_data.update({'task_id':obj.id,'action':CREATED})
         his = History.objects.create(**validated_data)  
         his.users.set(usrs) 
         return obj
@@ -25,7 +25,7 @@ class TaskSerializer(serializers.ModelSerializer):
         instance.save()
 
         usrs = validated_data.pop('users')
-        validated_data.update({'task_id':instance.id,'action':1})
+        validated_data.update({'task_id':instance.id,'action':EDITED})
         his = History.objects.create(**validated_data)  
         his.users.set(usrs)   
         return instance
