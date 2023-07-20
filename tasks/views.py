@@ -19,13 +19,17 @@ class TaskViewSet(viewsets.ModelViewSet):
         try:
             queryset = queryset.all()
             title = self.request.query_params.get('title')
-            if title is not None: queryset =  queryset.filter(title__iexact=title)
+            if title is not None: 
+                queryset =  queryset.filter(title__iexact=title)
             description = self.request.query_params.get('description')
-            if description is not None: queryset = queryset.filter(description__icontains=description)
+            if description is not None: 
+                queryset = queryset.filter(description__icontains=description)
             status = self.request.query_params.get('status')
-            if status is not None: queryset = queryset.filter(status__iexact=status)
+            if status is not None: 
+                queryset = queryset.filter(status__iexact=status)
             users = self.request.query_params.get('users')
-            if users is not None: queryset = queryset.filter(users__id__icontains=users)
+            if users is not None: 
+                queryset = queryset.filter(users__id__icontains=users)
         except:
             raise Http404
         return super().filter_queryset(queryset)
@@ -51,11 +55,14 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
         try:
             queryset = queryset.all()
             id = self.request.query_params.get('id')
-            if id is not None: queryset = queryset.filter(task_id__iexact=id)
+            if id is not None: 
+                queryset = queryset.filter(task_id__iexact=id)
             action = self.request.query_params.get('action')
-            if action is not None: queryset = queryset.filter(action__iexact=action)
+            if action is not None: 
+                queryset = queryset.filter(action__iexact=action)
             when = self.request.query_params.get('when')
-            if when is not None: queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+            if when is not None: 
+                queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
         except:
             raise Http404
         return super().filter_queryset(queryset)
