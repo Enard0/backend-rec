@@ -34,7 +34,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, pk=None):
         instance = self.queryset.get(pk=pk)       
-        data= instance.__dict__
+        data= vars(instance)
         data.update({'task_id':instance.id,'action':REMOVED})
         hserializer = HistorySerializer(data=data,context={'request': request})
         hserializer.is_valid(raise_exception=True)
