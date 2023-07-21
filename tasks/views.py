@@ -4,8 +4,9 @@ from rest_framework import viewsets, permissions,  mixins,  status
 from tasks.serializers import UserSerializer, TaskSerializer, HistorySerializer
 from rest_framework.response import Response
 from django.http import Http404
+from django.core.exceptions import BadRequest
 from datetime import datetime
-from tasks.permissions import UserPermsDecorator
+from tasks.permissions import UserPermsDecorator, UserPerms
 
 class TaskViewSet(viewsets.ModelViewSet):
     """
@@ -63,13 +64,15 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
             when = self.request.query_params.get('when')
             if when is not None: 
                 if when.isnumeric():
-                    queryset = queryset.filter(date__lte=datetime.fromtimestamp(int(when))).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+                    time = datetime.fromtimestamp(int(when))
                 else:
                     try:
                         time=datetime.fromisoformat(when.replace('Z',''))
-                        queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
                     except:
-                        pass
+                        raise BadRequest
+                queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+        except BadRequest:
+            raise BadRequest('Invalid data. Should be unix timestamp or ISO format')
         except:
             raise Http404
         return super().filter_queryset(queryset)
@@ -80,6 +83,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+    permission_classes = [UserPerms]
+    
     @UserPermsDecorator
     def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True,context={'request': request})

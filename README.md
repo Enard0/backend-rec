@@ -15,7 +15,7 @@ sudo docker-compose up -d --build
 ### History
 | Field | Type | Description|
 |--|--|--|
-| `date` | data | Time of action |
+| `date` | ISO format | Time of action |
 | `task_id` | int | id of task |
 | `action` | int | Action taken upon <br>`0 Created`<br>`1 Modify`<br>`2 Removal` |
 | `title` | text | Title of task, can't be empty |
