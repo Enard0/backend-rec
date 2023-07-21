@@ -17,22 +17,19 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.all()
-            title = self.request.query_params.get('title')
-            if title is not None: 
-                queryset =  queryset.filter(title__iexact=title)
-            description = self.request.query_params.get('description')
-            if description is not None: 
-                queryset = queryset.filter(description__icontains=description)
-            status = self.request.query_params.get('status')
-            if status is not None: 
-                queryset = queryset.filter(status__iexact=status)
-            users = self.request.query_params.get('users')
-            if users is not None: 
-                queryset = queryset.filter(users__id__icontains=users)
-        except:
-            raise Http404
+        queryset = queryset.all()
+        title = self.request.query_params.get('title')
+        if title is not None: 
+            queryset =  queryset.filter(title__iexact=title)
+        description = self.request.query_params.get('description')
+        if description is not None: 
+            queryset = queryset.filter(description__icontains=description)
+        status = self.request.query_params.get('status')
+        if status is not None: 
+            queryset = queryset.filter(status__iexact=status)
+        users = self.request.query_params.get('users')
+        if users is not None: 
+            queryset = queryset.filter(users__id__icontains=users)
         return super().filter_queryset(queryset)
     
     def destroy(self, request, pk=None):
@@ -53,32 +50,24 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
     serializer_class = HistorySerializer
     permission_classes = [permissions.IsAuthenticated]
     def filter_queryset(self, queryset):
-        try:
-            queryset = queryset.all()
-            id = self.request.query_params.get('id')
-            if id is not None: 
-                queryset = queryset.filter(task_id__iexact=id)
-        except:
-            raise Http404
-        try:
-            action = self.request.query_params.get('action')
-            if action is not None: 
-                queryset = queryset.filter(action__iexact=action)
-        except:
-            raise Http404    
+        queryset = queryset.all()    
+        id = self.request.query_params.get('id')
+        if id is not None: 
+            queryset = queryset.filter(task_id__iexact=id)
+        action = self.request.query_params.get('action')
+        if action is not None: 
+            queryset = queryset.filter(action__iexact=action)
         when = self.request.query_params.get('when')
         if when is not None: 
             if when.isnumeric():
                 time = datetime.fromtimestamp(int(when))
+                print(time)
             else:
                 try:
                     time=datetime.fromisoformat(when.replace('Z',''))
-                except:
+                except ValueError:
                     raise BadRequest
-            try:    
-                queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
-            except:
-                raise Http404
+            queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
         return super().filter_queryset(queryset)
     
 class UserViewSet(viewsets.ModelViewSet):
