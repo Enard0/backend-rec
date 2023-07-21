@@ -4,6 +4,7 @@ from tasks import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'regist', views.RegisterViewSet, basename='regist')
 router.register(r'tasks', views.TaskViewSet, basename='task')
 router.register(r'history', views.HistoryViewSet, basename='history')
 

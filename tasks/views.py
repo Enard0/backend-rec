@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from django.http import Http404
 from django.core.exceptions import BadRequest
 from datetime import datetime
-from tasks.permissions import UserPermsDecorator, UserPerms
+from tasks.permissions import RegisterPerms, UserPerms
 
 class TaskViewSet(viewsets.ModelViewSet):
     """
@@ -58,23 +58,27 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
             id = self.request.query_params.get('id')
             if id is not None: 
                 queryset = queryset.filter(task_id__iexact=id)
+        except:
+            raise Http404
+        try:
             action = self.request.query_params.get('action')
             if action is not None: 
                 queryset = queryset.filter(action__iexact=action)
-            when = self.request.query_params.get('when')
-            if when is not None: 
-                if when.isnumeric():
-                    time = datetime.fromtimestamp(int(when))
-                else:
-                    try:
-                        time=datetime.fromisoformat(when.replace('Z',''))
-                    except:
-                        raise BadRequest
-                queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
-        except BadRequest:
-            raise BadRequest('Invalid data. Should be unix timestamp or ISO format')
         except:
-            raise Http404
+            raise Http404    
+        when = self.request.query_params.get('when')
+        if when is not None: 
+            if when.isnumeric():
+                time = datetime.fromtimestamp(int(when))
+            else:
+                try:
+                    time=datetime.fromisoformat(when.replace('Z',''))
+                except:
+                    raise BadRequest
+            try:    
+                queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
+            except:
+                raise Http404
         return super().filter_queryset(queryset)
     
 class UserViewSet(viewsets.ModelViewSet):
@@ -84,3 +88,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [UserPerms]
+    
+class RegisterViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = []
+    serializer_class = UserSerializer
+    permission_classes = [RegisterPerms]
