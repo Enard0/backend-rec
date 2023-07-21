@@ -84,8 +84,3 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
     permission_classes = [UserPerms]
-    
-    @UserPermsDecorator
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True,context={'request': request})
-        return Response(serializer.data)
