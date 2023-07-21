@@ -66,7 +66,7 @@ class HistoryViewSet(mixins.ListModelMixin,viewsets.GenericViewSet):
                 try:
                     time=datetime.fromisoformat(when.replace('Z',''))
                 except ValueError:
-                    raise BadRequest
+                    raise BadRequest('Invalid time format. Should be unix timestamp or ISO format')
             queryset = queryset.filter(date__lte=time).order_by('task_id','-date').distinct('task_id').exclude(action=REMOVED)
         return super().filter_queryset(queryset)
     
